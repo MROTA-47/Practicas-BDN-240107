@@ -1,3 +1,4 @@
+
 -- =========================================
 -- CREACION DE USUARIOS
 -- =========================================
@@ -7,12 +8,14 @@ CREATE USER IF NOT EXISTS 'Samuel'@'%' IDENTIFIED BY '240023';
 
 
 -- =========================================
--- ASIGNACION DE PRIVILEGIOS A USUARIOS
+-- ASIGNACION DE PRIVILEGIOS
 -- =========================================
 
-GRANT ALL PRIVILEGES ON bd_test.* TO 'Samuel'@'%';
+-- Privilegios de superusuario para Samuel
+GRANT ALL PRIVILEGES ON . TO 'Samuel'@'%';
 
-GRANT SELECT, UPDATE, INSERT, DELETE
+-- Privilegios de SELECT, INSERT, UPDATE y DELETE para Aaron
+GRANT SELECT, INSERT, UPDATE, DELETE
 ON bd_test.* TO 'Aaron'@'%';
 
 
@@ -25,11 +28,12 @@ CREATE ROLE IF NOT EXISTS 'seller';
 CREATE ROLE IF NOT EXISTS 'buyer';
 CREATE ROLE IF NOT EXISTS 'guest';
 CREATE ROLE IF NOT EXISTS 'support';
-CREATE ROLE IF NOT EXISTS 'user_not_registres';
+CREATE ROLE IF NOT EXISTS 'common';
+CREATE ROLE IF NOT EXISTS 'user_not_registered';
 
 
 -- =========================================
--- ASIGNACION DE PRIVILEGIOS A LOS ROLES
+-- PRIVILEGIOS DE LOS ROLES
 -- =========================================
 
 -- ADMIN
@@ -48,12 +52,16 @@ GRANT SELECT
 ON bd_test.* TO 'guest';
 
 -- SUPPORT
-GRANT SELECT, UPDATE
+GRANT SELECT, UPDATE, INSERT
 ON bd_test.* TO 'support';
+
+-- COMMON
+GRANT SELECT
+ON bd_test.* TO 'common';
 
 -- USUARIO NO REGISTRADO
 GRANT SELECT
-ON bd_test.* TO 'user_not_registres';
+ON bd_test.* TO 'user_not_registered';
 
 
 -- =========================================
@@ -64,18 +72,3 @@ GRANT 'admin' TO 'Samuel'@'%';
 GRANT 'seller' TO 'Aaron'@'%';
 
 FLUSH PRIVILEGES;
-- Creación de usuarios remotos
-
-CREATE USER IF NOT EXISTS 'Aaron'@'%' IDENTIFIED BY '240045';
-
-CREATE USER IF NOT EXISTS 'Samuel'@'%' IDENTIFIED BY '240023';
-
-
--- Asignación de privilegios
-
-GRANT ALL PRIVILEGES ON bd_test.* TO 'Aaron'@'%';
-
-GRANT ALL PRIVILEGES ON bd_test.* TO 'Samuel'@'%';
-
-FLUSH PRIVILEGES;
-
