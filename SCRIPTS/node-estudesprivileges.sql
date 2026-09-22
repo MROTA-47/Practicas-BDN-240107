@@ -2,7 +2,7 @@
 -- PRÁCTICA BDN — MYSQL REMOTO (USUARIOS Y ROLES)
 -- ============================================================
 
-USE db_test;
+USE  db_bdn_240107;
 
 -- 1. ELIMINAR USUARIOS SI YA EXISTEN
 DROP USER IF EXISTS 'rene.cabrera'@'%';
