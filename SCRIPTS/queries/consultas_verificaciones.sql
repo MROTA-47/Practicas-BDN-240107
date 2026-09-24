@@ -13,7 +13,7 @@ SELECT COUNT(*) AS total_registros FROM tb_users;
 SELECT COUNT(*) AS total_registros FROM tb_logs;
 
 /* 5. Consultar todas las operaciones registradas */
-SELECT * FROM tb_logs;
+SELECT id, table_name, table_operation, db_user, operation_date FROM tb_logs;
 
 /* 6. Verificar que los usuarios remotos hayan sido creados */
 SELECT User, Host FROM mysql.user WHERE Host = '%' AND account_locked = 'N';
