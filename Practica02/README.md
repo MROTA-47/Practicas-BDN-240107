@@ -1,31 +1,32 @@
-# Práctica 02 — Conexiones Remotas para Bases de Datos SQL
+# Practica 02 - Conexiones Remotas para Bases de Datos SQL
 
 **Alumno:** Rene David Cabrera
 **Matrícula:** 240107
-**Estado:** Completada
 
 ---
 
-## Contenido de esta carpeta
+## Estructura de carpetas
 
-| Carpeta / Archivo | Descripción |
+| Carpeta | Contenido |
 |---|---|
-| `Backups/db_test.sql` | Respaldo original de la base |
+| `Backups/` | Respaldo de la base de datos |
 | `SCRIPTS/` | Scripts SQL, PowerShell y de terminal |
 | `seeds/` | Semillas y archivos CSV de carga masiva |
 | `queries/` | Consultas de verificación |
 
-### Scripts principales (en `SCRIPTS/`)
+---
+
+## Scripts principales
 
 | Archivo | Para qué sirve |
 |---|---|
-| `01_trazabilidades_optimizadas.sql` | Crea los índices, `entity_id` y las 4 vistas de trazabilidad |
+| `01_trazabilidades_optimizadas.sql` | Índices, `entity_id` y las 4 vistas de trazabilidad |
 | `02_consultas_13_14_15.sql` | Consultas 13, 14 y 15 adaptadas a esta base |
 | `03_corregir_entity_id.sql` | Recrea los 6 triggers para que llenen `entity_id` |
 | `04_tabla_categorias.sql` | Crea `tb_categorias` con clave foránea |
 | `EVIDENCIA_Practica02.sql` | Evidencia de los pasos 2 y 3 (se abre en Workbench) |
 | `verificacion_11_puntos.sql` | Los 11 puntos de verificación del profesor |
-| `trazabilidad_productos.sql` | Trazabilidad de productos (corregida) |
+| `trazabilidad_productos.sql` | Trazabilidad de productos (con la corrección del ID) |
 | `evidencia.cmd` | Evidencia del paso 1 (se ejecuta en CMD normal) |
 | `evidencia_terminal.sh` | Evidencia del paso 1 (se ejecuta en Git Bash) |
 | `COMANDOS_SELLERS.txt` | Comandos para los vendedores remotos |
@@ -33,17 +34,34 @@
 
 ---
 
-## Resultados obtenidos
+## Datos de conexión
+
+```bash
+# Desde esta PC
+mysql -u rene.cabrera -p240107 -h 127.0.0.1 -P 40107 db_test
+
+# Desde otra PC de la red
+mysql -u rene.cabrera -p240107 -h 10.10.154.221 -P 40107 db_test
+```
+
+| Dato | Valor |
+|---|---|
+| Servidor | `10.10.154.221` |
+| Puerto | `40107` |
+| Base principal | `db_test` |
+| Motor | MySQL Community Server 8.0.46 |
+
+---
+
+## Resultados verificados
 
 | Actividad | Resultado |
 |---|---|
-| Puerto configurado | `40107` escuchando en `0.0.0.0` |
-| Firewall | Regla "MySQL Remoto 40107" (solo ese puerto) |
-| Servicio | `MySQL40107` — Running / Automatic |
-| Carga masiva | 5000 productos por vendedor desde su PC |
 | Triggers | 9 (3 por tabla: productos, usuarios, categorías) |
-| Bitácora | Más de 5000 registros |
-| Vistas | 4 de trazabilidad |
+| Bitácora | Más de 10000 registros |
+| Carga masiva | 5000 productos por vendedor desde su PC |
+| Vistas de trazabilidad | 4 |
+| Tabla de categorías | `tb_categorias` con clave foránea |
 
 ---
 
@@ -61,11 +79,7 @@ En **MySQL Workbench** usa la conexión `db_test 240107 (local)` con usuario
 
 ---
 
-## Verificación rápida de permisos
+## Evidencia de permisos (punto 2.7)
 
-```sql
--- El usuario 'buyer' NO debe poder insertar (ERROR 1142 es lo esperado)
-SELECT COUNT(*) FROM tb_products;
-```
-
-Esa restricción es la evidencia del paso 2.7 de la práctica.
+Un usuario con rol `buyer` debe recibir `ERROR 1142` al intentar INSERT.
+Ese error **es la evidencia** de que el permiso quedó bien puesto.
