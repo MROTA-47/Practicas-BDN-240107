@@ -1,0 +1,161 @@
+=====================================================================
+  CARGA MASIVA DE 5000 PRODUCTOS - PRACTICA 02, PASO 3.4
+  Servidor: 10.10.154.221 | Puerto: 40107 | Base: db_test
+  Vendedores: oliver.sanchez (240615) y diego.ex (240709)
+=====================================================================
+
+  ESTADO ACTUAL
+  -------------
+  diego.ex   -> YA CARGO 5000 productos desde su computadora  [LISTO]
+  oliver.sanchez -> PENDIENTE
+
+  Cada uno carga 5000 productos desde SU PC, con SU usuario.
+  Eso es la 'carga de datos desde origen remoto' que pide el Paso 3.4.
+
+
+=====================================================================
+  1. OLIVER.SANCHEZ  (lo que falta hacer)
+=====================================================================
+
+  ARCHIVO: pide 5000_productos_oliver.csv  (1.08 MB, 5000 productos)
+  Sus SKUs van del 30001 al 35000, para NO chocar con los de diego.
+
+  --- OPCION A: Terminal (CMD o Git Bash)  [RECOMENDADA] ---
+
+  Conectarse:
+
+      mysql -u oliver.sanchez -p240615 -h 10.10.154.221 -P 40107 --local-infile=1 db_test
+
+  (escribe 240615 cuando pida la contrasena)
+
+  Ya dentro de MySQL, pegar:
+
+      LOAD DATA LOCAL INFILE 'C:/ruta/al/archivo/5000_productos_oliver.csv'
+      INTO TABLE tb_products
+      CHARACTER SET utf8mb4
+      FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '"'
+      LINES TERMINATED BY '\r\n'
+      IGNORE 1 LINES
+      (@id, sku, name, description, @precio, @stock, @status, @fecha, @upd)
+      SET price        = @precio,
+          stock        = @stock,
+          status       = IF(@status = '1', b'1', b'0'),
+          category     = COALESCE(
+                            NULLIF(SUBSTRING_INDEX(
+                                SUBSTRING_INDEX(description, 'Categoria: ', -1), '.', 1), ''),
+                            'Otros'),
+          creation_date = STR_TO_DATE(@fecha, '%d/%m/%Y %H:%i'),
+          last_update   = STR_TO_DATE(@upd,  '%d/%m/%Y %H:%i');
+
+      SELECT ROW_COUNT() AS filas_cargadas;
+      exit;
+
+  RESULTADO ESPERADO:  filas_cargadas = 5000
+
+  --- OPCION B: MySQL Workbench ---
+
+      Connection Name:  Practica 02 Oliver
+      Host:             10.10.154.221
+      Port:             40107
+      Username:         oliver.sanchez
+      Password:         240615
+      Schema:           db_test
+
+      Click en "+" (New Connection) -> Test Connection -> Connect
+
+      En el editor SQL, ABAJO: pestana "Settings" ->
+      MARCA  [x] Enable LOAD DATA LOCAL INFILE
+
+      Pega el bloque LOAD DATA de la Opcion A y dale al rayito.
+
+  NOTA IMPORTANTE: el CSV de oliver trae la categoria dentro del campo
+  description (asi lo genero el compañero), por eso el SET usa
+  SUBSTRING_INDEX sobre 'description' para sacarla. Si el CSV de diego ya
+  venia con prefijo de 3 letras en el SKU, por eso ahi se uso LEFT(sku,3).
+
+  Este bloque fue PROBADO con exito: cargo 5 filas de prueba con las
+  categorias correctas y sin errores.
+
+
+=====================================================================
+  2. DIEGO.EX  (ya lo hizo, por si hay que repetirlo)
+=====================================================================
+
+  ARCHIVO: 5000_productos.csv  (el del profesor)
+
+      mysql -u diego.ex -p240709 -h 10.10.154.221 -P 40107 --local-infile=1 db_test
+
+  Bloque LOAD DATA (el mismo que uso, pero con LEFT(sku,3) para la
+  categoria, porque ese CSV trae prefijo de 3 letras en el SKU):
+
+      LOAD DATA LOCAL INFILE 'C:/ruta/al/archivo/5000_productos.csv'
+      INTO TABLE tb_products
+      CHARACTER SET utf8mb4
+      FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '"'
+      LINES TERMINATED BY '\r\n'
+      IGNORE 1 LINES
+      (@id, sku, name, description, @precio, @stock, @status, @fecha, @upd)
+      SET price        = @precio,
+          stock        = @stock,
+          status       = IF(@status = '1', b'1', b'0'),
+          category     = CASE LEFT(sku, 3)
+                            WHEN 'ENE' THEN 'Energia'
+                            WHEN 'OFI' THEN 'Oficina'
+                            WHEN 'ELE' THEN 'Electronica'
+                            WHEN 'AUD' THEN 'Audio'
+                            WHEN 'ACC' THEN 'Accesorios'
+                            WHEN 'MOV' THEN 'Moviles'
+                            WHEN 'HOG' THEN 'Hogar'
+                            WHEN 'RED' THEN 'Redes'
+                            WHEN 'ALM' THEN 'Almacenamiento'
+                            WHEN 'GAM' THEN 'Gaming'
+                            ELSE 'Otros'
+                          END,
+          creation_date = STR_TO_DATE(@fecha, '%d/%m/%Y %H:%i'),
+          last_update   = STR_TO_DATE(@upd,  '%d/%m/%Y %H:%i');
+
+      SELECT ROW_COUNT() AS filas_cargadas;
+      exit;
+
+
+=====================================================================
+  3. SI LES SALE ERROR
+=====================================================================
+
+  ERROR 1006 / No se pudo conectar
+      -> No estan en la misma red. Ver "COMO_DEMOSTRAR.md", seccion de red.
+
+  ERROR 1140
+      -> Ir a Settings -> desmarca "Enable LOAD DATA LOCAL INFILE"
+
+  ERROR 1062 Duplicate entry 'SKU-...' for key 'tb_products.sku'
+      -> Ese archivo ya se cargo antes. Que use el otro CSV.
+
+  ERROR 1146 Table 'db_test.tb_products' doesn't exist
+      -> No puso "db_test" al final del comando.
+
+  "Can't find file"
+      -> La ruta esta mal. En Windows va con "/" y con la unidad:
+         C:/carpeta/archivo.csv
+         Verificar con:  dir C:\5000_productos_oliver.csv
+
+  Data too long for column 'sku'
+      -> SKU de mas de 20 caracteres. Que use el CSV correcto.
+
+
+=====================================================================
+  4. VERIFICAR QUE LOS DOS CARGARON (desde tu PC, como rene.cabrera)
+=====================================================================
+
+      SELECT inserted_by AS usuario, roles, COUNT(*) AS productos
+      FROM vw_trazabilidad_productos
+      WHERE id > 50
+      GROUP BY inserted_by, roles
+      ORDER BY productos DESC;
+
+  Debe salir UN registro por cada vendedor:
+
+      diego.ex@DESKTOP-XXXX   | seller | 5000
+      oliver.sanchez@DESKTOP-XXXX | seller | 5000
+
+=====================================================================
