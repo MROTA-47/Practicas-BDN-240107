@@ -2,7 +2,7 @@
 
 **Alumno:** Rene David Cabrera · **Matrícula:** 240107
 **Rama:** `Practica03` · **Base:** `db_test` · **Local:** puerto `40107` · **VPS:** puerto `40710`
-**Estado:** Lista para simulación (faltan solo las 5 imágenes de `docs/img/`)
+**Estado:** Completada (sin imágenes, solo scripts verificados)
 
 Referencia del profesor: https://github.com/MTI-MarcoRH/Praticas_BDN_MATRICULA/tree/Practica03
 (se adaptaron `remote_users_privileges_creation_7A.sql` y `queries/consultas_verificacion.sql`
