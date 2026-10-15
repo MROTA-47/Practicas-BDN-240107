@@ -1,0 +1,36 @@
+# NO commitear basura de la Practica 03 (ni respaldos ni EER generados).
+# Solo se versionan .sql pequenos, .md, .yml y PNG finales de docs/img.
+
+# Respaldos (los del profe pesan 5-14 MB cada uno)
+backups/
+*.sql.bak
+respaldo_*.sql
+respaldo*.sql
+resoaldo*.sql
+db_*.sql
+*_backup.sql
+
+# EER / Archify del profesor (html + json + py + png de validacion)
+EER_*/
+EER*.*html
+archify_*.*
+*archify*.*
+explorador.html
+prueba_interacciones.html
+*-check.json
+*.delivery.json
+*finalize*.json
+reporte_analisis.md
+estadisticas_tablas.json
+validacion_interacciones.json
+
+# Temporales de MySQL / Workbench / sistema
+*.bak
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# Pero SI permitir las imagenes finales de evidencia:
+!docs/img/*.png
+!docs/img/*.jpg

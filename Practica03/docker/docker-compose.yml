@@ -1,0 +1,23 @@
+version: "3.8"
+# Simulacion local/VPS de la Practica 03 (240107).
+# En el VPS srv2014995 YA existe mysql_db en 40710 (ver docker ps):
+# este compose es para simular en local o recrear en la nube sin basura.
+services:
+  mysql_p03:
+    image: mysql:8.0
+    container_name: mysql_p03_240107
+    restart: unless-stopped
+    command: --port=3306 --event-scheduler=ON
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-1234}
+      MYSQL_DATABASE: db_test
+    ports:
+      # Local Practica 02/03: 40107. En VPS el existente es 40710.
+      - "${MYSQL_PORT:-40107}:3306"
+    volumes:
+      - mysql_p03_data:/var/lib/mysql
+      # Los scripts se montan solo-lectura para ejecutarlos desde PuTTY:
+      #   mysql -h 127.0.0.1 -P 40710 -u root -p db_test < scripts/01_...
+      - ../scripts:/docker-entrypoint-initdb.d:ro
+volumes:
+  mysql_p03_data:
