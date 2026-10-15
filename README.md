@@ -10,15 +10,21 @@
 
 | Rama | Contenido |
 |---|---|
-| `main` | Estructura general del repositorio |
-| `Practica03` | Práctica 03 (en preparación) |
+| `Practica03` | Práctica 03 (lista para simulación, faltan imágenes) |
+
+## Tabla de Prácticas
+
+| No. | Nombre | Descripción | Estatus |
+|---|---|---|---|
+| 2. | Conexiones Remotas para Bases de Datos SQL | Crear y administrar usuarios y privilegios para conexiones remotas | 🟢 Concluida |
+| 3. | Manipulación de Datos, Relaciones, Procedimientos, Funciones y Eventos en Conexiones Remotas | Relación N:M, procedimientos, funciones, eventos y vista de conteo por categoría | 🟢 Concluida (faltan imágenes en `Practica03/docs/img/`) |
 
 ## Carpetas
 
 | Carpeta | Contenido | Estado |
 |---|---|---|
 | `Practica02/` | Scripts SQL, consultas, respaldos y semillas de la Práctica 02 | Completada |
-| `Practica03/` | Scripts de la Práctica 03 | Pendiente |
+| `Practica03/` | Scripts de la Práctica 03 | Completada (faltan imágenes `docs/img/`) |
 
 ---
 
